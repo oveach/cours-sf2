@@ -29,11 +29,17 @@
       </p>
     </div>
 
+    {# menu global du site #}
+    {# le paramètre active_route sert à mettre en surbrillance l'élément de menu actif suivant la page #}
+    {# à préciser dans chaque template utilisant ce layout #}
+    {{ render(controller("OCCoreBundle:Default:menu", {'activeRoute': active_route})) }}
+    
+    {# messages d'alerte de type info, warning, danger #}
     {% for type, flashMessages in app.session.flashbag.all %}
         {% for message in flashMessages %}
             <div class="alert alert-{{ type }} alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert">
-                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Fermer</span>
                 </button>
                 {{ message }}
             </div>
@@ -50,8 +56,6 @@
 
         <h4>Dernières annonces</h4>
         {{ render(controller("OCPlatformBundle:Advert:menu", {'limit': 3})) }}
-
-        <h3><a href="{{ path('oc_core_contact') }}">Contact</a></h3>
       </div>
       <div id="content" class="col-md-9">
         {% block body %}

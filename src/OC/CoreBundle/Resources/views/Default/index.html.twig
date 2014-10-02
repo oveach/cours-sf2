@@ -1,5 +1,7 @@
 {# src/OC/CoreBundle/Resources/views/Advert/index.html.twig #}
 
+{% set active_route = 'oc_core_homepage' %}
+
 {% extends "OCCoreBundle::layout.html.twig" %}
 
 {% block title %}
@@ -8,8 +10,10 @@
 
 {% block body %}
 
-  <h2>Superbe page d'accueil</h2>
+  <h1>Bienvenue</h1>
+  <hr/>
 
-  <p>Ici : une description du site</p>
+  <p>Ceci est la page d'accueil d'exemple du site pour le cours Symfony2 d'OpenClassRoom.</p>
 
 {% endblock %}
+

@@ -1,0 +1,5 @@
+<ul class="nav nav-pills">
+    {% for titre, route in menuItems %}
+    <li {% if active_route == route %} class="active" {% endif %}><a href="{{ path(route) }}">{{ titre }}</a></li>
+    {% endfor %}
+</ul>
