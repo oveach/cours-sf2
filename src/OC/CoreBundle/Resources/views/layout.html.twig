@@ -32,7 +32,7 @@
     {# menu global du site #}
     {# le paramètre active_route sert à mettre en surbrillance l'élément de menu actif suivant la page #}
     {# à préciser dans chaque template utilisant ce layout #}
-    {{ render(controller("OCCoreBundle:Default:menu", {'activeRoute': active_route})) }}
+    {{ render(controller("OCCoreBundle:Core:menu", {'activeRoute': active_route})) }}
     
     {# messages d'alerte de type info, warning, danger #}
     {% for type, flashMessages in app.session.flashbag.all %}
