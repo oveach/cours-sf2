@@ -29,6 +29,18 @@
       </p>
     </div>
 
+    {# messages d'alerte de type info, warning, danger #}
+    {% for type, flashMessages in app.session.flashbag.all %}
+        {% for message in flashMessages %}
+            <div class="alert alert-{{ type }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Fermer</span>
+                </button>
+                {{ message|raw }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <div class="row">
       <div id="menu" class="col-md-3">
         <h3>Les annonces</h3>

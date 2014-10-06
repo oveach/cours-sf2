@@ -4,17 +4,20 @@
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Application;
+use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdvertController extends Controller
 {
-  public function indexAction($page)
+  public function indexAction($page, Request $request)
   {
-    if ($page < 1) {
-      throw $this->createNotFoundException("La page ".$page." n'existe pas.");
-    }
+      // il n'y a pas de raison de lancer une exception s'il n'y a pas d'annonces !
+//     if ($page < 1) {
+//       throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+//     }
 
     // Ici je fixe le nombre d'annonces par page à 3
     // Mais bien sûr il faudrait utiliser un paramètre, et y accéder via $this->container->getParameter('nb_per_page')
@@ -26,12 +29,22 @@ class AdvertController extends Controller
       ->getRepository('OCPlatformBundle:Advert')
       ->getAdverts($page, $nbPerPage)
     ;
+    
+    // par contre, on peut afficher un flash d'info s'il n'y a pas d'annonce
+    if (count($listAdverts) == 0) {
+        $request->getSession()->getFlashBag()->add(
+            'info', sprintf(
+                'Il n\'y a aucune annonce pour le moment. Vous pouvez en ajouter <a href="%s">en cliquant ici</a>',
+                $this->generateUrl('oc_platform_add')
+            )
+        );
+    }
 
     // On calcule le nombre total de pages grâce au count($listAdverts) qui retourne le nombre total d'annonces
     $nbPages = ceil(count($listAdverts)/$nbPerPage);
 
     // Si la page n'existe pas, on retourne une 404
-    if ($page > $nbPages) {
+    if ($page > $nbPages && $nbPages > 0) {
       throw $this->createNotFoundException("La page ".$page." n'existe pas.");
     }
 
@@ -68,6 +81,38 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
+      // Création de l'entité Advert
+      $advert = new Advert();
+      // ajout d'un chiffre aléatoire en fin de chaîne pour contourner la contrainte unique sur nos données de test :p
+      $advert->setTitle('Recherche développeur Symfony2. ' . mt_rand(100, 200));
+      $advert->setAuthor('Alexandre');
+      $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…");
+      
+      // Création de l'entité Image
+      $image = new Image();
+      $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+      $image->setAlt('Job de rêve');
+      
+      // On lie l'image à l'annonce
+      $advert->setImage($image);
+      
+      // On récupère l'EntityManager
+      $em = $this->getDoctrine()->getManager();
+      
+      // Étape 1 : On « persiste » l'entité
+      $em->persist($advert);
+      
+      // Étape 1 bis : si on n'avait pas défini le cascade={"persist"},
+      // on devrait persister à la main l'entité $image
+      // $em->persist($image);
+      
+      // Étape 2 : On déclenche l'enregistrement
+      $em->flush();
+      
+      // comme c'est du test et de l'insertion directe, on redirige vers la page d'accueil des annonces
+      $request->getSession()->getFlashBag()->add('info', 'Annonce de test bien enregistrée.');
+      return $this->redirect($this->generateUrl('oc_platform_home'));
+      
     // La gestion d'un formulaire est particulière, mais l'idée est la suivante :
 
     if ($request->isMethod('POST')) {

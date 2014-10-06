@@ -9,11 +9,6 @@
 
   <h2>Page d'accueil de notre site</h2>
 
-  {# On affiche tous les messages flash dont le nom est « info » #}
-  {% for message in app.session.flashbag.get('info') %}
-    <div class="alert alert-info">Message flash : {{ message }}</div>
-  {% endfor %}
-
   {# Pour afficher les dernières annonces, on réutilise le contrôleur menu du PlatformBundle #}
   <h3>Dernières annonces</h3>
   {{ render(controller("OCPlatformBundle:Advert:menu", {'limit': 3})) }}
