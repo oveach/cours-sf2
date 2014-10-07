@@ -1,2 +1,10 @@
 # src/OC/PlatformBundle/Resources/config/services.yml
 
+parameters:
+    oc_platform.advert_purger.class: OC\PlatformBundle\Purger\Purger
+
+services:
+    oc_platform.advert_purger:
+        class: '%oc_platform.advert_purger.class%'
+        arguments: ['@doctrine.orm.entity_manager']
+        

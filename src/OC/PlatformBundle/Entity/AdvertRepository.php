@@ -149,4 +149,37 @@ class AdvertRepository extends EntityRepository
       ->setParameter('published', true)
     ;
   }
+
+    /**
+     * Efface les annonces vieilles de plus de X jours sans application
+     * @param int $days
+     * @return int Nombre de lignes supprimées
+     */
+    public function purge($days)
+    {
+        // calcule la date limite des annonces
+        $dateMin = new \DateTime();
+        $dateMin->setTime(0, 0, 0)->sub(new \DateInterval('P' . $days . 'D'));
+        
+        // sélectionne les annonces antérieures sans application
+        $qb = $this->_em->createQueryBuilder();
+        $adverts = $qb->select('a')
+            ->from('OCPlatformBundle:Advert', 'a')
+            ->leftJoin('a.applications', 'app')
+            ->where($qb->expr()->isNull('app'))
+            ->andWhere('a.date < :dateMin')
+            ->setParameter('dateMin', $dateMin)
+            ->getQuery()
+            ->getResult()
+            ;
+        
+        // supprime les annonces trouvées
+        foreach ($adverts as $advert) {
+            $this->_em->remove($advert);
+        }
+        $this->_em->flush();
+        
+        // retourne le nombre d'annonces trouvées qui ont été supprimées
+        return count($adverts);
+    }
 }

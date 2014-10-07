@@ -192,4 +192,24 @@ class AdvertController extends Controller
       'listAdverts' => $listAdverts
     ));
   }
+  
+    public function purgeAction($days, Request $request)
+    {
+        $nbLinesPurged = $this->get('oc_platform.advert_purger')->purge($days);
+        
+        if ($nbLinesPurged == 0) {
+            $request->getSession()->getFlashBag()
+                ->add('warning', "Aucune vieille annonce à supprimer.");
+        } else {
+            if ($nbLinesPurged == 1) {
+                $message = "$nbLinesPurged annonce vieille de $days jours a été supprimée.";
+            } else {
+                $message = "$nbLinesPurged annonces vieilles de $days jours ont été supprimées.";
+            }
+            $request->getSession()->getFlashBag()
+                ->add('info', $message);
+        }
+        
+        return $this->redirect($this->generateUrl('oc_platform_home'));
+    }
 }
