@@ -151,7 +151,7 @@ class AdvertRepository extends EntityRepository
   }
 
     /**
-     * Efface les annonces vieilles de plus de X jours sans application
+     * Efface les annonces vieilles de plus de X jours sans candidature
      * @param int $days
      * @return int Nombre de lignes supprimées
      */
@@ -161,7 +161,7 @@ class AdvertRepository extends EntityRepository
         $dateMin = new \DateTime();
         $dateMin->setTime(0, 0, 0)->sub(new \DateInterval('P' . $days . 'D'));
         
-        // sélectionne les annonces antérieures sans application
+        // sélectionne les annonces antérieures sans candidature (matérialisée par l'entité "Application")
         $qb = $this->_em->createQueryBuilder();
         $adverts = $qb->select('a')
             ->from('OCPlatformBundle:Advert', 'a')

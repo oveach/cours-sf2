@@ -81,12 +81,18 @@ class AdvertController extends Controller
 
   public function addAction(Request $request)
   {
+      // détermine la date de l'annonce en enlevant aléatoirement X jours à la date courante
+      // pour avoir un max de dates différentes en base pour le test
+      $dateAnnonce = new \DateTime();
+      $dateAnnonce->sub(new \DateInterval('P' . mt_rand(0, 15) . 'D'));
+      
       // Création de l'entité Advert
       $advert = new Advert();
       // ajout d'un chiffre aléatoire en fin de chaîne pour contourner la contrainte unique sur nos données de test :p
-      $advert->setTitle('Recherche développeur Symfony2. ' . mt_rand(100, 200));
+      $advert->setTitle('Recherche développeur Symfony2. ' . mt_rand(100000, 300000));
       $advert->setAuthor('Alexandre');
       $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…");
+      $advert->setDate($dateAnnonce);
       
       // Création de l'entité Image
       $image = new Image();
